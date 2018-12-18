@@ -131,11 +131,15 @@ INNER JOIN country AS cn ON cty.country_id = cn.country_id;
 
 --7h. List the top five genres in gross revenue in descending order. 
 --(Hint: you may need to use the following tables: category, film_category, inventory, payment, and rental.)
+ --RIGHT and INNER joins on rental and payment tables yield same result, except the right join returns a null value that earns a revenue of 9.95
+-- this is excluded because null value can't exist in rental id column of rental table bc rental id is primary id; however, foreign keys can have null
+-- values which is why py.rental_id can have a null value. other than this, though, a foreign key cannot have values that differ from the primary key
+-- that it is referencing
 SELECT cat.`name` AS "GENRE", SUM(py.amount) AS "Revenue" FROM category AS cat 
 INNER JOIN film_category AS fc ON cat.category_id = fc.category_id 
 INNER JOIN inventory AS iv ON fc.film_id = iv.film_id
 INNER JOIN rental AS rn ON iv.inventory_id = rn.inventory_id
-INNER JOIN payment AS py ON rn.rental_id = py.rental_id GROUP BY cat.`name` 
+RIGHT JOIN payment AS py ON rn.rental_id = py.rental_id GROUP BY cat.`name` 
 ORDER BY SUM(py.amount) DESC LIMIT 5;
 
 -- 8a. In your new role as an executive, you would like to have an easy way of viewing the Top five genres by gross revenue. 
@@ -145,7 +149,7 @@ SELECT cat.`name` AS "GENRE", SUM(py.amount) AS "Revenue" FROM category AS cat
 INNER JOIN film_category AS fc ON cat.category_id = fc.category_id 
 INNER JOIN inventory AS iv ON fc.film_id = iv.film_id
 INNER JOIN rental AS rn ON iv.inventory_id = rn.inventory_id
-INNER JOIN payment AS py ON rn.rental_id = py.rental_id GROUP BY cat.`name` 
+RIGHT JOIN payment AS py ON rn.rental_id = py.rental_id GROUP BY cat.`name` 
 ORDER BY SUM(py.amount) DESC LIMIT 5;
 
 --8b. How would you display the view that you created in 8a?
